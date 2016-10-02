@@ -52,7 +52,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppInfo.cs" />
+    <Compile Include="Broadcast.cs" />
     <Compile Include="ConfigManager.cs" />
+    <Compile Include="ObjectManager.cs" />
     <Compile Include="ServerMain.cs" />
   </ItemGroup>
   <ItemGroup>

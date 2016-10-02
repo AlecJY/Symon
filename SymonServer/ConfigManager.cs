@@ -6,6 +6,7 @@ namespace Symon.Server {
         private Config config = new Config();
 
         public bool Load(string jsonPath) {
+
             if (!File.Exists(jsonPath)) {
                 return false;
             }
@@ -15,9 +16,13 @@ namespace Symon.Server {
             }
             return true;
         }
+
+        public bool EnabledBroadcast() {
+            return config.Broadcast;
+        }
     }
 
     class Config {
-        public bool Broadcast { get; set; }
+        public bool Broadcast { get; set; } = true;
     }
 }
