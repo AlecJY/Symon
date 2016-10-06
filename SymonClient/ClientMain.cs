@@ -4,13 +4,15 @@ namespace Symon.Client {
     class ClientMain {
         public ClientMain(string[] args) {
             Broadcast broadcast = new Broadcast();
-            string IP =  broadcast.Listen();
-            Console.WriteLine(IP);
-            args[0] += args[1];
+            string ip = broadcast.Listen();
+            TcpStream stream = new TcpStream();
+            stream.Start(ip);
         }
 
         static void Main(string[] args) {
-            new ClientMain(args);
+            while (true) {
+                new ClientMain(args);
+            }
         }
     }
 }
