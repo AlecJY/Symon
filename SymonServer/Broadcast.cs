@@ -7,19 +7,18 @@ using System.Threading;
 namespace Symon.Server {
     public class Broadcast {
         private string ip;
-        private int timeout = 20000;
+        private int timeout;
         private Socket server;
         private IPEndPoint remoteIP;
 
-        public Broadcast(string ip) {
-            this.ip = ip;
-            Initialize();
-        }
-
-        public Broadcast(string ip, int timeout) {
+        public Broadcast(string ip, int timeout = 20000) {
             this.ip = ip;
             this.timeout = timeout;
-            Initialize();
+
+            remoteIP = new IPEndPoint(IPAddress.Parse(ip), AppInfo.BroadcastPort);
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            server.EnableBroadcast = true;
+            server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
         }
 
         public void Send() {
@@ -30,13 +29,6 @@ namespace Symon.Server {
                 server.SendTo(buffer, remoteIP);
                 Thread.Sleep(timeout);
             }
-        }
-
-        private void Initialize() {
-            remoteIP = new IPEndPoint(IPAddress.Parse(ip), AppInfo.BroadcastPort);
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            server.EnableBroadcast = true;
-            server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
         }
     }
 }
