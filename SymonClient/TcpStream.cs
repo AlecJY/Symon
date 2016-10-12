@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
@@ -16,14 +17,14 @@ namespace Symon.Client {
                 client.Connect(remoteEP);
                 client.LingerState = new LingerOption(true, 60);
                 NetworkStream stream = client.GetStream();
-                NegotiateStream authStream = new NegotiateStream(stream, false);
-                authStream.AuthenticateAsClient();
+                SslStream sslStream = new SslStream(stream, false, CertificateValidationCallback);
+                sslStream.AuthenticateAsClient("Symon");
 
-                byte[] buffer = Encoding.UTF8.GetBytes("Test message.");
+                byte[] buffer = Encoding.UTF8.GetBytes("Hello");
                 while (true) {
-                    authStream.Write(buffer, 0, buffer.Length);
-                    authStream.Flush();
-                    Thread.Sleep(10000);
+                    sslStream.Write(buffer, 0, buffer.Length);
+                    sslStream.Flush();
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception e) {
@@ -31,6 +32,10 @@ namespace Symon.Client {
             }
 
 
+        }
+
+        static bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+            return true;
         }
     }
 }
