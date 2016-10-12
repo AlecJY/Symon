@@ -10,7 +10,7 @@ namespace Symon.Server {
         public ServerMain(string[] args) {
             settings = new ConfigManager();
             settings.Load(@"settings.json");
-            StartBroadcast("127.0.0.1");
+            StartBroadcast("169.254.255.255");
             StartTcpStream();
         }
 
