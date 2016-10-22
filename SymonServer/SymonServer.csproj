@@ -59,6 +59,7 @@
     <Compile Include="Broadcast.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="ObjectManager.cs" />
+    <Compile Include="PrivateKeyReader.cs" />
     <Compile Include="TcpStream.cs" />
     <Compile Include="ServerMain.cs" />
   </ItemGroup>

@@ -8,8 +8,11 @@ namespace Symon.Server {
         private ObjectManager objectManager = new ObjectManager();
 
         public ServerMain(string[] args) {
+            PrivateKeyReader keyReader = new PrivateKeyReader("private.key");
+            keyReader.GetKeyString();
+            
             settings = new ConfigManager();
-            settings.Load(@"settings.json");
+            settings.Load("settings.json");
             StartBroadcast("169.254.255.255");
             StartTcpStream();
         }

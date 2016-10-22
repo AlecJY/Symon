@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -14,7 +15,7 @@ namespace Symon.RsaKeygen {
             var publicKey = rsa.ToXmlString(false);
             var privateKey = rsa.ToXmlString(true);
             SecureString pwd;
-            byte[] encryptedPrivateKey = null;
+            List<byte> privateKeyFile = new List<byte>();
 
             // input private key password
             while (true) {
@@ -35,12 +36,12 @@ namespace Symon.RsaKeygen {
             }
 
             // rfc2898 crypt
-            byte[] salt = {248, 171, 37, 33, 130, 182, 147, 177};
+            byte[] salt = new byte[8];
 
             // randomly generate salt, not use now
-            /* using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider()) {
+            using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider()) {
                 rngCsp.GetBytes(salt);
-            } */
+            }
 
             try {
                 Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(SecureStringToBytes(pwd), salt, 1000);
@@ -53,7 +54,9 @@ namespace Symon.RsaKeygen {
                 encrypt.Write(privetKeyBytes, 0, privetKeyBytes.Length);
                 encrypt.FlushFinalBlock();
                 encrypt.Close();
-                encryptedPrivateKey = encryptionStream.ToArray();
+                privateKeyFile.AddRange(salt);
+                privateKeyFile.AddRange(encAlg.IV);
+                privateKeyFile.AddRange(encryptionStream.ToArray());
                 key.Reset();
             }
             catch (Exception e) {
@@ -63,7 +66,7 @@ namespace Symon.RsaKeygen {
             
             try {
                 File.WriteAllText("public.key", publicKey);
-                File.WriteAllBytes("private.key", encryptedPrivateKey);
+                File.WriteAllBytes("private.key", privateKeyFile.ToArray());
                 Console.WriteLine("Keys generate to \"" + Directory.GetCurrentDirectory() + "\"");
             }
             catch (Exception e) {
