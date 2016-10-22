@@ -9,11 +9,11 @@ namespace Symon.Server {
 
         public ServerMain(string[] args) {
             PrivateKeyReader keyReader = new PrivateKeyReader("private.key");
-            keyReader.GetKeyString();
+            CryptMessage cryptMessage = new CryptMessage(keyReader.GetKeyString());
             
             settings = new ConfigManager();
             settings.Load("settings.json");
-            StartBroadcast("169.254.255.255");
+            StartBroadcast("127.0.0.1");
             StartTcpStream();
         }
 

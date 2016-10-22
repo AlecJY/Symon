@@ -10,22 +10,33 @@ using Pluralsight.Crypto;
 
 namespace Symon.Server {
     public class TcpStream {
-        private TcpListener listener;
         private X509Certificate2 cert = SslCertificate.GenerateCert();
+        private ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
 
         public void Start() {
-            listener = new TcpListener(IPAddress.Any, AppInfo.TcpStreamPort);
+            TcpListener listener = new TcpListener(IPAddress.Any, AppInfo.TcpStreamPort);
             listener.Start();
-            NewClient();
+            while (true) {
+                try {
+                    Console.WriteLine("Create new client!!!");
+                    tcpClientConnected.Reset();
+                    listener.BeginAcceptTcpClient(AcceptCallback, listener);
+                    tcpClientConnected.WaitOne();
+                }
+                catch (Exception e) {
+                    Console.WriteLine(e);
+                }
+            }
         }
 
-        public void NewClient() {
+        private void AcceptCallback(IAsyncResult ar) {
             try {
-                TcpClient clientRequest = listener.AcceptTcpClient();
+                TcpListener listener = (TcpListener) ar.AsyncState;
+                TcpClient clientRequest = listener.EndAcceptTcpClient(ar);
+                tcpClientConnected.Set();
                 NetworkStream stream = clientRequest.GetStream();
                 SslStream sslStream = new SslStream(stream, false);
-                Thread newClienThread = new Thread(NewClient);
-                newClienThread.Start();
+
                 sslStream.AuthenticateAsServer(cert, false, SslProtocols.Tls, true);
                 byte[] buffer = new byte[1024];
                 int recv;
@@ -33,23 +44,25 @@ namespace Symon.Server {
 
                 while (true) {
                     recv = sslStream.Read(buffer, 0, buffer.Length);
-                    if (clientRequest.Connected == false || sslStream.IsAuthenticated == false || sslStream.IsEncrypted == false) {
+                    if (clientRequest.Connected == false || sslStream.IsAuthenticated == false ||
+                        sslStream.IsEncrypted == false) {
                         break;
                     }
                     str = Encoding.UTF8.GetString(buffer, 0, recv);
                     Console.WriteLine(str);
                     Console.WriteLine(clientRequest.Client.RemoteEndPoint.ToString());
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Console.WriteLine(e);
             }
         }
     }
 
+
     public class SslCertificate {
         public static X509Certificate2 GenerateCert() {
             X509Certificate2 cert;
-                // CngKey.Create(CngAlgorithm2.Rsa).CreateSelfSignedCertificate(new X500DistinguishedName("CN=*"));
             using (CryptContext ctx = new CryptContext()) {
                 ctx.Open();
                 cert = ctx.CreateSelfSignedCertificate(new SelfSignedCertProperties {

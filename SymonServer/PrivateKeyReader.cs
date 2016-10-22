@@ -10,10 +10,8 @@ namespace Symon.Server {
         private byte[] encrytedPrivateKey = null;
         private byte[] salt = new byte[8];
         private byte[] iv = new byte[8];
-        private string filename;
 
         public PrivateKeyReader(string filename) {
-            this.filename = filename;
             try {
                 byte[] privateKeyFile = File.ReadAllBytes(filename);
                 encrytedPrivateKey = new byte[privateKeyFile.Length - 16];
