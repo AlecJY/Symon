@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -6,19 +7,22 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-using Pluralsight.Crypto;
 
 namespace Symon.Server {
     public class TcpStream {
-        private X509Certificate2 cert = SslCertificate.GenerateCert();
+        private X509Certificate2 cert;
         private ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
+        private List<ClientInfo> ClientList = new List<ClientInfo>();
+
+        public TcpStream(X509Certificate2 cert) {
+            this.cert = cert;
+        }
 
         public void Start() {
             TcpListener listener = new TcpListener(IPAddress.Any, AppInfo.TcpStreamPort);
             listener.Start();
             while (true) {
                 try {
-                    Console.WriteLine("Create new client!!!");
                     tcpClientConnected.Reset();
                     listener.BeginAcceptTcpClient(AcceptCallback, listener);
                     tcpClientConnected.WaitOne();
@@ -36,6 +40,11 @@ namespace Symon.Server {
                 tcpClientConnected.Set();
                 NetworkStream stream = clientRequest.GetStream();
                 SslStream sslStream = new SslStream(stream, false);
+
+                ClientInfo client = new ClientInfo();
+                client.TcpClient = clientRequest;
+                client.SslStream = sslStream;
+                ClientList.Add(client);
 
                 sslStream.AuthenticateAsServer(cert, false, SslProtocols.Tls, true);
                 byte[] buffer = new byte[1024];
@@ -59,21 +68,9 @@ namespace Symon.Server {
         }
     }
 
-
-    public class SslCertificate {
-        public static X509Certificate2 GenerateCert() {
-            X509Certificate2 cert;
-            using (CryptContext ctx = new CryptContext()) {
-                ctx.Open();
-                cert = ctx.CreateSelfSignedCertificate(new SelfSignedCertProperties {
-                    IsPrivateKeyExportable = true,
-                    KeyBitLength = 4096,
-                    Name = new X500DistinguishedName("CN=Symon"),
-                    ValidFrom = DateTime.Now.AddDays(-1),
-                    ValidTo = DateTime.Now.AddYears(10)
-                });
-            }
-            return cert;
-        }
+    public class ClientInfo {
+        public TcpClient TcpClient;
+        public SslStream SslStream;
+        public int PingLostTimes = 0;
     }
 }

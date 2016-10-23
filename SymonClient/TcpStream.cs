@@ -9,6 +9,11 @@ using System.Threading;
 namespace Symon.Client {
     public class TcpStream {
         private TcpClient client;
+        private X509Certificate2 cert;
+
+        public TcpStream(X509Certificate2 cert) {
+            this.cert = cert;
+        }
 
         public void Start(String ip) {
             try {
@@ -34,8 +39,24 @@ namespace Symon.Client {
 
         }
 
-        static bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
-            return true;
+        private bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+            bool certificated = false;
+            try {
+                certificated = true;
+                if (!certificate.GetPublicKeyString().Equals(cert.GetPublicKeyString())) {
+                    certificated = false;
+                }
+                if (!certificate.GetRawCertDataString().Equals(cert.GetRawCertDataString())) {
+                    certificated = false;
+                }
+                if (!certificate.GetSerialNumberString().Equals(cert.GetSerialNumberString())) {
+                    certificated = false;
+                }
+            }
+            catch (Exception e) {
+                certificated = false;
+            }
+            return certificated;
         }
     }
 }

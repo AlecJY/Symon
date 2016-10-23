@@ -8,13 +8,10 @@ namespace Symon.Server {
         private ObjectManager objectManager = new ObjectManager();
 
         public ServerMain(string[] args) {
-            PrivateKeyReader keyReader = new PrivateKeyReader("private.key");
-            CryptMessage cryptMessage = new CryptMessage(keyReader.GetKeyString());
-            
             settings = new ConfigManager();
             settings.Load("settings.json");
-            StartBroadcast("127.0.0.1");
             StartTcpStream();
+            StartBroadcast("127.0.0.1");
         }
 
         private static void Main(string[] args) {
@@ -31,7 +28,7 @@ namespace Symon.Server {
         }
 
         private void StartTcpStream() {
-            TcpStream tcpStream = new TcpStream();
+            TcpStream tcpStream = new TcpStream(PrivateKeyReader.GetCert("key.pfx"));
             Thread tcpStreamThread = new Thread(tcpStream.Start);
             tcpStreamThread.Start();
         }
