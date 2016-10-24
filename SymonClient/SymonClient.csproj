@@ -38,11 +38,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppInfo.cs" />
-    <Compile Include="Broadcast.cs" />
-    <Compile Include="BroadcastAnalyzer.cs" />
+    <Compile Include="Broadcast\Broadcast.cs" />
+    <Compile Include="Broadcast\BroadcastAnalyzer.cs" />
     <Compile Include="ClientMain.cs" />
-    <Compile Include="PublicKeyReader.cs" />
-    <Compile Include="TcpStream.cs" />
+    <Compile Include="MessageAnalyzer.cs" />
+    <Compile Include="Tcp\PublicKeyReader.cs" />
+    <Compile Include="ServerAuth.cs" />
+    <Compile Include="Tcp\TcpStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">

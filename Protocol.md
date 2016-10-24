@@ -1,5 +1,9 @@
 ﻿# Sync Daemon Protocol
 Sync Daemon Protocol version 0.1
+
+## Basic
+* All tcp messages end with a CRLF
+
 ## Server
 ### Broadcast
 
