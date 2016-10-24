@@ -1,15 +1,17 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace Symon.Server {
     public class PrivateKeyReader {
         public static X509Certificate2 GetCert(string filename) {
             X509Certificate2 cert;
+            if (!File.Exists(filename)) {
+                Console.Error.WriteLine("Cannot find cert \"" + filename + "\"");
+                Environment.Exit(-1);
+            }
             while (true) {
                 try {
                     Console.Write("Password: ");
@@ -19,11 +21,18 @@ namespace Symon.Server {
                     break;
                 }
                 catch (FileNotFoundException e) {
-                    Console.Error.WriteLine("Cannot found cert \"" + filename + "\"");
+                    Console.Error.WriteLine("Cannot find cert \"" + filename + "\"");
                     Environment.Exit(-1);
                 }
                 catch (CryptographicException e) {
-                    Console.WriteLine("Wrong password. Please try again");
+                    if (e.HResult == unchecked ((int)0x80070056)) {
+                        Console.WriteLine("Wrong password. Please try again");
+                    }
+                    else {
+                        Console.Error.WriteLine("Certificate broken or other error.");
+                        Console.Error.WriteLine(e);
+                        Environment.Exit(-1);
+                    }
                 }
                 catch (Exception e) {
                     Console.Error.WriteLine(e);

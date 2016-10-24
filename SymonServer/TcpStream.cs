@@ -20,7 +20,14 @@ namespace Symon.Server {
 
         public void Start() {
             TcpListener listener = new TcpListener(IPAddress.Any, AppInfo.TcpStreamPort);
-            listener.Start();
+            try {
+                listener.Start();
+            }
+            catch (Exception e) {
+                Console.Error.WriteLine("Port " + AppInfo.BroadcastPort + " is used. Please check if other application use the port.");
+                Console.Error.WriteLine(e);
+                Environment.Exit(-1);
+            }
             while (true) {
                 try {
                     tcpClientConnected.Reset();

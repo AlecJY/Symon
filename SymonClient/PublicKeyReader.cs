@@ -10,7 +10,7 @@ namespace Symon.Client {
                 X509Certificate2 cert = new X509Certificate2(filename);
                 return cert;
             } catch (CryptographicException e) {
-                Console.Error.WriteLine("Cannot found public key file \"" + filename + "\"");
+                Console.Error.WriteLine("Cannot find public key file \"" + filename + "\"");
                 Environment.Exit(-1);
             } catch (Exception e) {
                 Console.Error.WriteLine(e);
