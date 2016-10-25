@@ -61,6 +61,7 @@
     <Compile Include="ConfigManager.cs" />
     <Compile Include="MessageAnalyzer.cs" />
     <Compile Include="ObjectManager.cs" />
+    <Compile Include="SystemCall.cs" />
     <Compile Include="Tcp\PrivateKeyReader.cs" />
     <Compile Include="Tcp\TcpStream.cs" />
     <Compile Include="ServerMain.cs" />
@@ -91,6 +92,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

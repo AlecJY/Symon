@@ -18,6 +18,10 @@ namespace Symon.Server {
             this.cert = cert;
         }
 
+        public List<ClientInfo> GetClients() {
+            return ClientList;
+        }
+
         public void Start() {
             TcpListener listener = new TcpListener(IPAddress.Any, AppInfo.TcpStreamPort);
             try {

@@ -4,6 +4,7 @@ namespace Symon.Client {
     public class MessageAnalyzer {
         private ServerInfo server;
         private bool Running = false;
+        private SystemCall SystemCall;
 
         public MessageAnalyzer(ServerInfo server) {
             this.server = server;
@@ -16,6 +17,13 @@ namespace Symon.Client {
                 server.Messages.RemoveAt(0);
                 if (msg.StartsWith("201")) {
                     server.Auth.GetAuth(msg);
+                }
+                if (msg.StartsWith("30")) {
+                    if (msg.StartsWith("300")) {
+                        SystemCall = new SystemCall(server, msg);
+                    } else { 
+                        SystemCall.SetMsg(msg);
+                    }
                 }
             }
             Running = false;

@@ -1,9 +1,14 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Reflection;
+using log4net;
+using log4net.Config;
 
 namespace Symon.Client {
     class ClientMain {
+        static ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public ClientMain(string[] args) {
-            ServicePointManager.ServerCertificateValidationCallback += (o, c, ch, er) => true;
+            Logger.Info("Starting Symon Client");
             Broadcast broadcast = new Broadcast();
             string ip = broadcast.Listen();
             TcpStream stream = new TcpStream(PublicKeyReader.Read("key.cer"));
@@ -11,6 +16,7 @@ namespace Symon.Client {
         }
 
         static void Main(string[] args) {
+            XmlConfigurator.Configure(new FileInfo("log4net.config"));
             while (true) {
                 new ClientMain(args);
             }
