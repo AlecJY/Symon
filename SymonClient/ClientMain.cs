@@ -5,7 +5,7 @@ using log4net.Config;
 
 namespace Symon.Client {
     class ClientMain {
-        static ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
 
         public ClientMain(string[] args) {
             Logger.Info("Starting Symon Client");

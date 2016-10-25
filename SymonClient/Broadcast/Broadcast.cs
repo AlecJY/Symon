@@ -2,9 +2,11 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using log4net;
 
 namespace Symon.Client {
     public class Broadcast {
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         private IPEndPoint IPEnd = new IPEndPoint(IPAddress.Any, AppInfo.BroadcastPort);
         private Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         private EndPoint IP;
@@ -18,6 +20,8 @@ namespace Symon.Client {
             catch (Exception e) {
                 Console.Error.WriteLine("Port " + AppInfo.BroadcastPort + " is used. Please check if other application use the port.");
                 Console.Error.WriteLine(e);
+                Logger.Fatal("Port " + AppInfo.BroadcastPort + " is used. Please check if other application use the port.");
+                Logger.Fatal(e);
                 Environment.Exit(-1);
             }
         }

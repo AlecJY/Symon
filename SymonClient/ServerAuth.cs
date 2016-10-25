@@ -2,9 +2,11 @@
 using System.IO;
 using System.Text;
 using System.Threading;
+using log4net;
 
 namespace Symon.Client {
     public class ServerAuth {
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         private ServerInfo server;
 
         public ServerAuth(ServerInfo server) {
@@ -20,6 +22,7 @@ namespace Symon.Client {
                 }
                 catch (IOException e) {
                     Console.Error.WriteLine(e);
+                    Logger.Error(e);
                     break;
                 }
                 Thread.Sleep(3000);
@@ -30,6 +33,7 @@ namespace Symon.Client {
             if (msg.ToLower().Contains("hello")) {
                 server.isAuth = true;
                 Console.WriteLine("Connected to server.");
+                Logger.Info("Connected to server.");
             }
         }
     }

@@ -6,9 +6,11 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using log4net;
 
 namespace Symon.Client {
     public class TcpStream {
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         private TcpClient client;
         private X509Certificate2 cert;
         private ServerInfo server;
@@ -58,6 +60,7 @@ namespace Symon.Client {
             }
             catch (Exception e) {
                 Console.WriteLine(e);
+                Logger.Warn(e);
             }
 
 

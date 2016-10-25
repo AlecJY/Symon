@@ -1,7 +1,9 @@
 ﻿using System;
+using log4net;
 
 namespace Symon.Client {
     class BroadcastAnalyzer {
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         private bool nameCheck;
         private bool protocolCheck;
         private string IP;
@@ -36,7 +38,7 @@ namespace Symon.Client {
                 }
                 catch (Exception e) {
                     Console.WriteLine(e);
-                    throw;
+                    Logger.Error(e);
                 }
             }
         }

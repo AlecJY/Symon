@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Security;
 using log4net;
 
 namespace Symon.Client {
     public class SystemCall {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
 
         private int mode;
         private ServerInfo server;
@@ -69,7 +68,8 @@ namespace Symon.Client {
             }
             catch (Exception e) {
                 Console.Error.WriteLine(e);
-                
+                Logger.Error(e);
+
             }
         }
 
@@ -84,6 +84,7 @@ namespace Symon.Client {
             }
             catch (Exception e) {
                 Console.Error.WriteLine(e);
+                Logger.Error(e);
             }
 
         }
