@@ -24,7 +24,7 @@ namespace Symon.Server {
             StackFrame frame = new StackFrame(1);
             Connection connection = new Connection(lastID, clients);
             ConnectionInfo connectionInfo = new ConnectionInfo(lastID, frame.GetMethod().GetType().Namespace, name, receive);
-            ConnectionList[lastID] = connectionInfo;
+            ConnectionList.Add(lastID, connectionInfo);
             return connection;
         }
 

@@ -16,7 +16,7 @@ namespace Symon.Server {
         public void GetAuth(string msg) {
             if (msg.ToLower().Contains("hello") && !client.IsAuth) {
                 client.IsAuth = true;
-                string hello = "201 Hello From Server\r\n";
+                string hello = "201 Hello From Server";
                 byte[] buffer = Encoding.UTF8.GetBytes(hello);
                 Console.WriteLine("Client " + client.TcpClient.Client.RemoteEndPoint + " Connected.");
                 try {
