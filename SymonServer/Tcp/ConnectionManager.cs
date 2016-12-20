@@ -89,7 +89,21 @@ namespace Symon.Server {
             }
         }
 
+        public Dictionary<uint, SimpleClientInfo> GetClientInfos() {
+            Dictionary<uint, SimpleClientInfo> clientInfos = new Dictionary<uint, SimpleClientInfo>();
+            foreach (KeyValuePair<uint, ClientInfo> keyValuePair in clients) {
+                SimpleClientInfo simpleClientInfo = new SimpleClientInfo();
+                simpleClientInfo.ClientId = keyValuePair.Value.ClientId;
+                clientInfos.Add(keyValuePair.Key, simpleClientInfo);
+            }
+            return clientInfos;
+        }
+
         public delegate void Receive(byte[] msg, uint id);
+
+        public class SimpleClientInfo {
+            public uint ClientId;
+        }
     }
 
     public class SuperviseConnection : Connection {

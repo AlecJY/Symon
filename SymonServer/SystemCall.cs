@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -8,17 +9,18 @@ using System.Text;
 namespace Symon.Server {
     class SystemCall {
         private ClientInfo client;
+        private SendMsg send;
 
-        public SystemCall(ClientInfo client) {
-            this.client = client;
+        public SystemCall(SendMsg send) {
+            this.send = send;
         }
 
-        public int Send(string cmd) {
-            string systemCall = "300 MODE_1\r\n";
-            cmd = "301 " + cmd + "\r\n";
+        public int Send(string cmd, Dictionary<uint, bool> sendClient) {
+            string systemCall = "300 MODE_1";
+            cmd = "301 " + cmd;
             try {
-                client.SslStream.Write(Encoding.UTF8.GetBytes(systemCall));
-                client.SslStream.Write(Encoding.UTF8.GetBytes(cmd));
+                send(Encoding.UTF8.GetBytes(systemCall), sendClient);
+                send(Encoding.UTF8.GetBytes(cmd), sendClient);
             } catch (Exception e) {
                 Console.Error.WriteLine(e);
                 return -1;
@@ -26,14 +28,14 @@ namespace Symon.Server {
             return 0;
         }
 
-        public int Send(string cmd, string argument) {
-            string systemCall = "300 MODE_2\r\n";
-            cmd = "301 " + cmd + "\r\n";
-            argument = "302 " + argument + "\r\n";
+        public int Send(string cmd, string argument, Dictionary<uint, bool> sendClient) {
+            string systemCall = "300 MODE_2";
+            cmd = "301 " + cmd;
+            argument = "302 " + argument;
             try {
-                client.SslStream.Write(Encoding.UTF8.GetBytes(systemCall));
-                client.SslStream.Write(Encoding.UTF8.GetBytes(cmd));
-                client.SslStream.Write(Encoding.UTF8.GetBytes(argument));
+                send(Encoding.UTF8.GetBytes(systemCall), sendClient);
+                send(Encoding.UTF8.GetBytes(cmd), sendClient);
+                send(Encoding.UTF8.GetBytes(argument), sendClient);
             } catch (Exception e) {
                 Console.Error.WriteLine(e);
                 return -1;
@@ -41,22 +43,20 @@ namespace Symon.Server {
             return 0;
         }
 
-        public int Send(string cmd, string argument, string user, SecureString pass) {
-            string systemCall = "300 MODE_4\r\n";
-            cmd = "301 " + cmd + "\r\n";
-            argument = "302 " + argument + "\r\n";
-            user = "303 " + argument + "\r\n";
+        public int Send(string cmd, string argument, string user, SecureString pass, Dictionary<uint, bool> sendClient) {
+            string systemCall = "300 MODE_4";
+            cmd = "301 " + cmd;
+            argument = "302 " + argument;
+            user = "303 " + argument;
             try {
-                client.SslStream.Write(Encoding.UTF8.GetBytes(systemCall));
-                client.SslStream.Write(Encoding.UTF8.GetBytes(cmd));
-                client.SslStream.Write(Encoding.UTF8.GetBytes(argument));
-                client.SslStream.Write(Encoding.UTF8.GetBytes(user));
-                if (Encoding.UTF8.GetString(SecureStringToBytes(pass)).Contains("\r\n")) {
-                    throw new InvalidDataException("Password Contains CRLF");
-                }
-                client.SslStream.Write(Encoding.UTF8.GetBytes("304 "));
-                client.SslStream.Write(SecureStringToBytes(pass));
-                client.SslStream.Write(Encoding.UTF8.GetBytes("\r\n"));
+                send(Encoding.UTF8.GetBytes(systemCall), sendClient);
+                send(Encoding.UTF8.GetBytes(cmd), sendClient);
+                send(Encoding.UTF8.GetBytes(argument), sendClient);
+                send(Encoding.UTF8.GetBytes(user), sendClient);
+                List<byte> buffer = new List<byte>();
+                buffer.AddRange(Encoding.UTF8.GetBytes("304 "));
+                buffer.AddRange(SecureStringToBytes(pass));
+                send(buffer.ToArray(), sendClient);
             }
             catch (Exception e) {
                 Console.Error.WriteLine(e);
@@ -82,5 +82,7 @@ namespace Symon.Server {
             }
             return pwd;
         }
+
+        public delegate void SendMsg(byte[] msg, Dictionary<uint, bool> sendClient);
     }
 }

@@ -11,6 +11,22 @@ namespace Symon.Server {
 
         public MessageAnalyzer(SuperviseConnection connection) {
             _connection = connection;
+            Thread startUiThread = new Thread(StartUI);
+            startUiThread.Start();
+        }
+
+        private void StartUI() {
+            while (true) {
+                string cmd = Console.ReadLine();
+                string arguments = Console.ReadLine();
+                Dictionary<uint, bool> sendClient = new Dictionary<uint, bool>();
+                Dictionary<uint, Connection.SimpleClientInfo> clientInfos = _connection.GetClientInfos();
+                foreach (KeyValuePair<uint, Connection.SimpleClientInfo> keyValuePair in clientInfos) {
+                    sendClient.Add(keyValuePair.Value.ClientId, true);
+                }
+                SystemCall systemCall = new SystemCall(_connection.Send);
+                systemCall.Send(cmd, arguments, sendClient);
+            }
         }
 
         private void Run() {

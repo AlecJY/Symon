@@ -12,15 +12,6 @@ namespace Symon.Server {
             settings.Load("settings.json");
             TcpStream tcpStream = StartTcpStream();
             StartBroadcast("127.0.0.1");
-            while (true) {
-                string cmd = Console.ReadLine();
-                string arguments = Console.ReadLine();
-                foreach (KeyValuePair<uint, ClientInfo> keyValuePair in tcpStream.GetClients()) {
-                    SystemCall systemCall = new SystemCall(keyValuePair.Value);
-                    systemCall.Send(cmd, arguments);
-                }
-            }
-
         }
 
         private static void Main(string[] args) {
