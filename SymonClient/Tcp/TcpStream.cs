@@ -14,6 +14,7 @@ namespace Symon.Client {
         private TcpClient client;
         private X509Certificate2 cert;
         private ServerInfo server;
+        private ConnectionManager ConnectionManager;
 
         public TcpStream(X509Certificate2 cert) {
             this.cert = cert;
@@ -33,29 +34,47 @@ namespace Symon.Client {
                 server.SslStream = sslStream;
                 server.Client = client;
 
-                MessageAnalyzer messageAnalyzer = new MessageAnalyzer(server);
 
-                ServerAuth auth = new ServerAuth(server);
-                server.Auth = auth;
-                Thread authThread = new Thread(auth.Auth);
-                authThread.Start();
+                ConnectionManager = new ConnectionManager(server);
 
                 byte[] buffer = new byte[1024];
                 int recv;
-                string str = "";
+                int length = 0;
+                uint id;
+                List<byte> recvList = new List<byte>();
+                List<byte> message = new List<byte>();
 
                 while (true) {
                     recv = sslStream.Read(buffer, 0, buffer.Length);
-                    str += Encoding.UTF8.GetString(buffer, 0, recv);
+                    if (client.Connected == false || sslStream.IsAuthenticated == false ||
+                        sslStream.IsEncrypted == false) {
+                        break;
+                    }
+                    byte[] recvData = new byte[recv];
+                    Array.Copy(buffer, recvData, recv);
+                    recvList.AddRange(recvData);
                     while (true) {
-                        if (!str.Contains("\r\n")) {
+                        if (length == 0) {
+                            length = BitConverter.ToInt32(recvList.ToArray(), 0);
+                            recvList.RemoveRange(0, 4);
+                        } else if (length + 4 <= recvList.Count) {
+                            id = BitConverter.ToUInt32(recvList.ToArray(), 0);
+                            recvList.RemoveRange(0, 4);
+                            message.AddRange(recvList.GetRange(0, length));
+                            recvList.RemoveRange(0, length);
+
+                            ServerInfo.Message msg = new ServerInfo.Message();
+                            msg.Id = id;
+                            msg.MsgBytes = message.ToArray();
+                            ConnectionManager.SetMessage(msg);
+                            message.Clear();
+
+                            length = 0;
+                        } else {
+                            ConnectionManager.CallReceiver();
                             break;
                         }
-                        int p = str.IndexOf("\r\n");
-                        server.Messages.Add(str.Substring(0, p));
-                        str = str.Substring(p + 2);
                     }
-                    messageAnalyzer.Analyze();
                 }
             }
             catch (Exception e) {
@@ -88,10 +107,14 @@ namespace Symon.Client {
     }
 
     public class ServerInfo {
-        public bool isAuth = false;
         public SslStream SslStream;
         public TcpClient Client;
-        public List<string> Messages = new List<string>();
+        public List<Message> Messages = new List<Message>();
         public ServerAuth Auth;
+
+        public class Message {
+            public uint Id;
+            public byte[] MsgBytes;
+        }
     }
 }

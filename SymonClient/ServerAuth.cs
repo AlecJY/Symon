@@ -7,18 +7,19 @@ using log4net;
 namespace Symon.Client {
     public class ServerAuth {
         private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
-        private ServerInfo server;
+        private Send send;
+        private bool isAuth;
 
-        public ServerAuth(ServerInfo server) {
-            this.server = server;
+        public ServerAuth(Send send) {
+            this.send = send;
         }
 
         public void Auth() {
-            string hello = "200 Hello From Client\r\n";
+            string hello = "200 Hello From Client";
             byte[] buffer = Encoding.UTF8.GetBytes(hello);
-            while (!server.isAuth) {
+            while (isAuth) {
                 try {
-                    server.SslStream.Write(buffer);
+                    send(buffer);
                 }
                 catch (IOException e) {
                     Console.Error.WriteLine(e);
@@ -31,10 +32,12 @@ namespace Symon.Client {
 
         public void GetAuth(string msg) {
             if (msg.ToLower().Contains("hello")) {
-                server.isAuth = true;
+                isAuth = true;
                 Console.WriteLine("Connected to server.");
                 Logger.Info("Connected to server.");
             }
         }
+
+        public delegate void Send(byte[] msg);
     }
 }

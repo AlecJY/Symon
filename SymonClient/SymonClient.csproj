@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9AA09A8C-7320-45E8-9321-AD006192775B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Symon.Client</RootNamespace>
     <AssemblyName>SymonClient</AssemblyName>
@@ -66,6 +66,7 @@
     <Compile Include="ClientMain.cs" />
     <Compile Include="MessageAnalyzer.cs" />
     <Compile Include="SystemCall.cs" />
+    <Compile Include="Tcp\ConnectionManager.cs" />
     <Compile Include="Tcp\PublicKeyReader.cs" />
     <Compile Include="ServerAuth.cs" />
     <Compile Include="Tcp\TcpStream.cs" />

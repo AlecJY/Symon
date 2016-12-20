@@ -1,26 +1,29 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Text;
+using System.Threading;
 
 namespace Symon.Client {
     public class MessageAnalyzer {
-        private ServerInfo server;
+        private SuperviseConnection connection;
         private bool Running = false;
         private SystemCall SystemCall;
+        private List<string> msgs;
 
-        public MessageAnalyzer(ServerInfo server) {
-            this.server = server;
+        public MessageAnalyzer(SuperviseConnection connection) {
+            this.connection = connection;
         }
 
         private void Run() {
             Running = true;
-            while (server.Messages.Count > 0) {
-                string msg = server.Messages[0];
-                server.Messages.RemoveAt(0);
+            while (msgs.Count > 0) {
+                string msg = msgs[0];
+                msgs.RemoveAt(0);
                 if (msg.StartsWith("201")) {
-                    server.Auth.GetAuth(msg);
+                    connection.GetServer().Auth.GetAuth(msg);
                 }
                 if (msg.StartsWith("30")) {
                     if (msg.StartsWith("300")) {
-                        SystemCall = new SystemCall(server, msg);
+                        SystemCall = new SystemCall(msg);
                     } else { 
                         SystemCall.SetMsg(msg);
                     }
@@ -29,7 +32,8 @@ namespace Symon.Client {
             Running = false;
         }
 
-        public void Analyze() {
+        public void Analyze(byte[] msg) {
+            msgs.Add(Encoding.UTF8.GetString(msg));
             if (!Running) {
                 Thread runMessageAnalyze = new Thread(Run);
                 runMessageAnalyze.Start();

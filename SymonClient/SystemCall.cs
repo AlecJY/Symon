@@ -11,7 +11,7 @@ namespace Symon.Client {
         private ServerInfo server;
         private string[] Msgs = new string[4];
 
-        public SystemCall(ServerInfo server, string msg) {
+        public SystemCall(string msg) {
             if (msg.EndsWith("MODE_1")) {
                 mode = 1;
             }
