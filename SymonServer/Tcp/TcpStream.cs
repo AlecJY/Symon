@@ -5,20 +5,22 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
 
 namespace Symon.Server {
     public class TcpStream {
         private X509Certificate2 cert;
         private ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
-        private List<ClientInfo> ClientList = new List<ClientInfo>();
+        private Dictionary<uint, ClientInfo> ClientList = new Dictionary<uint, ClientInfo>();
+        private ConnectionManager ConnectionManager;
+        private uint _lastClientId = 0;
 
         public TcpStream(X509Certificate2 cert) {
             this.cert = cert;
+            ConnectionManager = new ConnectionManager(ClientList);
         }
 
-        public List<ClientInfo> GetClients() {
+        public Dictionary<uint, ClientInfo> GetClients() {
             return ClientList;
         }
 
@@ -55,14 +57,17 @@ namespace Symon.Server {
                 ClientInfo client = new ClientInfo();
                 client.TcpClient = clientRequest;
                 client.SslStream = sslStream;
-                ClientList.Add(client);
-
-                MessageAnalyzer messageAnalyzer = new MessageAnalyzer(client);
+                client.ClientId = _lastClientId;
+                _lastClientId++;
+                ClientList.Add(client.ClientId, client);
 
                 sslStream.AuthenticateAsServer(cert, false, SslProtocols.Tls, true);
                 byte[] buffer = new byte[1024];
                 int recv;
-                string str = "";
+                int length = 0;
+                uint id;
+                List<byte> recvList = new List<byte>();
+                List<byte> message = new List<byte>();
 
                 while (true) {
                     recv = sslStream.Read(buffer, 0, buffer.Length);
@@ -70,16 +75,33 @@ namespace Symon.Server {
                         sslStream.IsEncrypted == false) {
                         break;
                     }
-                    str += Encoding.UTF8.GetString(buffer, 0, recv);
+                    byte[] recvData = new byte[recv];
+                    Array.Copy(buffer, recvData, recv);
+                    recvList.AddRange(recvData);
                     while (true) {
-                        if (!str.Contains("\r\n")) {
+                        if (length == 0) {
+                            length = BitConverter.ToInt32(recvList.ToArray(), 0);
+                            recvList.RemoveRange(0, 4);
+                        }
+                        else if (length + 4 <= recvList.Count) {
+                            id = BitConverter.ToUInt32(recvList.ToArray(), 0);
+                            recvList.RemoveRange(0, 4);
+                            message.AddRange(recvList.GetRange(0, length));
+                            recvList.RemoveRange(0, length);
+
+                            ClientInfo.Message msg = new ClientInfo.Message();
+                            msg.Id = id;
+                            msg.MsgBytes = message.ToArray();
+                            msg.ClientId = client.ClientId;
+                            ConnectionManager.SetMessage(msg);
+                            message.Clear();
+
+                            length = 0;
+                        } else {
+                            ConnectionManager.CallReceiver();
                             break;
                         }
-                        int p = str.IndexOf("\r\n");
-                        client.Messages.Add(str.Substring(0, p));
-                        str = str.Substring(p+2);
                     }
-                    messageAnalyzer.Analyze();
                 }
             }
             catch (Exception e) {
@@ -91,8 +113,14 @@ namespace Symon.Server {
     public class ClientInfo {
         public TcpClient TcpClient;
         public SslStream SslStream;
-        public List<string> Messages = new List<string>();
         public int PingLostTimes = 0;
-        public bool isAuth = false;
+        public uint ClientId;
+        public bool IsAuth = false;
+
+        public class Message {
+            public uint Id;
+            public byte[] MsgBytes;
+            public uint ClientId;
+        }
     }
 }

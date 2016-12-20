@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Symon.Server {
@@ -14,8 +15,8 @@ namespace Symon.Server {
             while (true) {
                 string cmd = Console.ReadLine();
                 string arguments = Console.ReadLine();
-                foreach (ClientInfo client in tcpStream.GetClients()) {
-                    SystemCall systemCall = new SystemCall(client);
+                foreach (KeyValuePair<uint, ClientInfo> keyValuePair in tcpStream.GetClients()) {
+                    SystemCall systemCall = new SystemCall(keyValuePair.Value);
                     systemCall.Send(cmd, arguments);
                 }
             }

@@ -16,7 +16,7 @@ namespace Symon.Client {
         }
 
         static void Main(string[] args) {
-            XmlConfigurator.Configure(new FileInfo("log4net.config"));
+            XmlConfigurator.Configure(new FileInfo("log.config"));
             while (true) {
                 new ClientMain(args);
             }

@@ -20,7 +20,7 @@ namespace Symon.Server {
                     cert = new X509Certificate2("key.pfx", pwd);
                     break;
                 }
-                catch (FileNotFoundException e) {
+                catch (FileNotFoundException) {
                     Console.Error.WriteLine("Cannot find cert \"" + filename + "\"");
                     Environment.Exit(-1);
                 }
