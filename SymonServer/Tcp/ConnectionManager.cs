@@ -16,7 +16,7 @@ namespace Symon.Server {
             this.clients = clients;
             SuperviseConnection connection = new SuperviseConnection(0, clients);
             MessageAnalyzer messageAnalyzer = new MessageAnalyzer(connection);
-            ConnectionList[0] = new ConnectionInfo(0, "Symon.Server", "Basic", messageAnalyzer.Analyze);
+            ConnectionList[0] = new ConnectionInfo(0, "Symon.Server", "Base", messageAnalyzer.Analyze);
         }
 
         public Connection NewConnection(string name, Connection.Receive receive) {
@@ -63,7 +63,7 @@ namespace Symon.Server {
             }
 
             public void Receive(byte[] msg, uint id) {
-                receive.Invoke(msg, id);
+                receive(msg, id);
             }
         }
     }
