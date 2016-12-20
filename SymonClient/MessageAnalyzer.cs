@@ -7,7 +7,7 @@ namespace Symon.Client {
         private SuperviseConnection connection;
         private bool Running = false;
         private SystemCall SystemCall;
-        private List<string> msgs;
+        private List<string> msgs = new List<string>();
 
         public MessageAnalyzer(SuperviseConnection connection) {
             this.connection = connection;

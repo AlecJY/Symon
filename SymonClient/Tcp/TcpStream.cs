@@ -54,7 +54,7 @@ namespace Symon.Client {
                     Array.Copy(buffer, recvData, recv);
                     recvList.AddRange(recvData);
                     while (true) {
-                        if (length == 0) {
+                        if (length == 0 && recvList.Count >= 4) {
                             length = BitConverter.ToInt32(recvList.ToArray(), 0);
                             recvList.RemoveRange(0, 4);
                         } else if (length + 4 <= recvList.Count) {

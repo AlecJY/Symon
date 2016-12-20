@@ -8,7 +8,7 @@ namespace Symon.Client {
     public class ServerAuth {
         private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         private Send send;
-        private bool isAuth;
+        private bool isAuth = false;
 
         public ServerAuth(Send send) {
             this.send = send;
@@ -17,7 +17,7 @@ namespace Symon.Client {
         public void Auth() {
             string hello = "200 Hello From Client";
             byte[] buffer = Encoding.UTF8.GetBytes(hello);
-            while (isAuth) {
+            while (!isAuth) {
                 try {
                     send(buffer);
                 }

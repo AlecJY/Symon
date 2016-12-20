@@ -17,9 +17,10 @@ namespace Symon.Server {
             Running = true;
             while (_msgList.Count > 0) {
                 string msg = Encoding.UTF8.GetString(_msgList[0].Msg);
+                uint id = _msgList[0].Id;
                 _msgList.RemoveAt(0);
                 if (msg.StartsWith("200")) {
-                    ClientAuth clientAuth = new ClientAuth(_connection.getClient(_msgList[0].Id), _connection.Send);
+                    ClientAuth clientAuth = new ClientAuth(_connection.getClient(id), _connection.Send);
                     clientAuth.GetAuth(msg);
                 }
             }
