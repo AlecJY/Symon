@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using log4net;
+using log4net.Repository.Hierarchy;
 
 namespace Symon.Client {
     public class ConnectionManager {
@@ -74,6 +76,7 @@ namespace Symon.Client {
     }
 
     public class Connection {
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         protected uint id;
         protected ServerInfo server;
 
@@ -83,9 +86,14 @@ namespace Symon.Client {
         }
 
         public void Send(byte[] msg) {
-            server.SslStream.Write(BitConverter.GetBytes(msg.Length));
-            server.SslStream.Write(BitConverter.GetBytes(id));
-            server.SslStream.Write(msg);
+            try {
+                server.SslStream.Write(BitConverter.GetBytes(msg.Length));
+                server.SslStream.Write(BitConverter.GetBytes(id));
+                server.SslStream.Write(msg);
+            } catch (Exception e) {
+                Console.Error.WriteLine(e);
+                Logger.Error(e);
+            }
         }
 
         public delegate void Receive(byte[] msg);

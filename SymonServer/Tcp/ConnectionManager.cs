@@ -81,10 +81,14 @@ namespace Symon.Server {
             foreach (KeyValuePair<uint, bool> keyValuePair in sendClient) {
                 if (!clients.ContainsKey(keyValuePair.Key)) {
                     Console.Error.WriteLine("Cannot found client \"" + keyValuePair.Key + "\"!");
-                } else if (keyValuePair.Value) {
-                    clients[keyValuePair.Key].SslStream.Write(BitConverter.GetBytes(msg.Length));
-                    clients[keyValuePair.Key].SslStream.Write(BitConverter.GetBytes(id));
-                    clients[keyValuePair.Key].SslStream.Write(msg);
+                } else if (keyValuePair.Value && clients[keyValuePair.Key].TcpClient.Connected) {
+                    try {
+                        clients[keyValuePair.Key].SslStream.Write(BitConverter.GetBytes(msg.Length));
+                        clients[keyValuePair.Key].SslStream.Write(BitConverter.GetBytes(id));
+                        clients[keyValuePair.Key].SslStream.Write(msg);
+                    } catch (Exception e) {
+                        Console.Error.WriteLine(e);
+                    }
                 }
             }
         }

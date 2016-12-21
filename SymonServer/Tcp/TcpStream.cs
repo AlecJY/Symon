@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -63,14 +64,18 @@ namespace Symon.Server {
 
                 sslStream.AuthenticateAsServer(cert, false, SslProtocols.Tls, true);
                 byte[] buffer = new byte[1024];
-                int recv;
+                int recv = 0;
                 int length = 0;
                 uint id;
                 List<byte> recvList = new List<byte>();
                 List<byte> message = new List<byte>();
 
-                while (true) {
-                    recv = sslStream.Read(buffer, 0, buffer.Length);
+                while (clientRequest.Connected && clientRequest.Client.Blocking) {
+                    try {
+                        recv = sslStream.Read(buffer, 0, buffer.Length);
+                    } catch (IOException) {
+                        break;
+                    }
                     if (clientRequest.Connected == false || sslStream.IsAuthenticated == false ||
                         sslStream.IsEncrypted == false) {
                         break;
@@ -97,12 +102,15 @@ namespace Symon.Server {
                             message.Clear();
 
                             length = 0;
-                        } else {
+                        }
+                        else {
                             ConnectionManager.CallReceiver();
                             break;
                         }
                     }
                 }
+                Console.WriteLine("Client " + clientRequest.Client.RemoteEndPoint + " Disconnected.");
+                ClientList.Remove(client.ClientId);
             }
             catch (Exception e) {
                 Console.WriteLine(e);

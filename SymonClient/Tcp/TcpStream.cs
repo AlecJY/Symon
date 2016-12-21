@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading;
 using log4net;
 
 namespace Symon.Client {
@@ -44,8 +43,12 @@ namespace Symon.Client {
                 List<byte> recvList = new List<byte>();
                 List<byte> message = new List<byte>();
 
-                while (true) {
-                    recv = sslStream.Read(buffer, 0, buffer.Length);
+                while (server.Client.Connected && server.Client.Client.Blocking) {
+                    try {
+                        recv = sslStream.Read(buffer, 0, buffer.Length);
+                    } catch (IOException) {
+                        break;
+                    }
                     if (client.Connected == false || sslStream.IsAuthenticated == false ||
                         sslStream.IsEncrypted == false) {
                         break;
@@ -76,13 +79,13 @@ namespace Symon.Client {
                         }
                     }
                 }
+                Console.WriteLine("Disconnected from server.");
+                Logger.Info("Disconnected from server.");
             }
             catch (Exception e) {
                 Console.WriteLine(e);
-                Logger.Warn(e);
+                Logger.Error(e);
             }
-
-
         }
 
         private bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {

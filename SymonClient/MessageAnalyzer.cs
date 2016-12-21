@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
@@ -14,7 +15,6 @@ namespace Symon.Client {
         }
 
         private void Run() {
-            Running = true;
             while (msgs.Count > 0) {
                 string msg = msgs[0];
                 msgs.RemoveAt(0);
@@ -24,8 +24,15 @@ namespace Symon.Client {
                 if (msg.StartsWith("30")) {
                     if (msg.StartsWith("300")) {
                         SystemCall = new SystemCall(msg);
-                    } else { 
-                        SystemCall.SetMsg(msg);
+                        if (SystemCall == null) {
+                            Console.WriteLine("Object create failed");
+                        }
+                    } else {
+                        if (SystemCall == null) {
+                            Console.Error.WriteLine("Wrong argument");
+                        } else {
+                            SystemCall.SetMsg(msg);
+                        }
                     }
                 }
             }
@@ -35,6 +42,7 @@ namespace Symon.Client {
         public void Analyze(byte[] msg) {
             msgs.Add(Encoding.UTF8.GetString(msg));
             if (!Running) {
+                Running = true;
                 Thread runMessageAnalyze = new Thread(Run);
                 runMessageAnalyze.Start();
             }

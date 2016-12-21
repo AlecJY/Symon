@@ -30,7 +30,6 @@ namespace Symon.Server {
         }
 
         private void Run() {
-            Running = true;
             while (_msgList.Count > 0) {
                 string msg = Encoding.UTF8.GetString(_msgList[0].Msg);
                 uint id = _msgList[0].Id;
@@ -46,6 +45,7 @@ namespace Symon.Server {
         public void Analyze(byte[] msg, uint id) {
             _msgList.Add(new Message(msg, id));
             if (!Running) {
+                Running = true;
                 Thread runMessageAnalyzer = new Thread(Run);
                 runMessageAnalyzer.Start();
             }
