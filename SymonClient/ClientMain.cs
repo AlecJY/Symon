@@ -8,7 +8,7 @@ using log4net.Config;
 namespace Symon.Client {
     class ClientMain {
         static void Main(string[] args) {
-            XmlConfigurator.Configure(new FileInfo("log.config"));
+            XmlConfigurator.Configure(new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "log.config"));
             ServiceBase[] serviceBases = {
                 new SymonClientService()
             };

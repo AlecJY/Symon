@@ -1,4 +1,6 @@
-﻿using log4net;
+﻿using System.IO;
+using System.Reflection;
+using log4net;
 
 namespace Symon.Client {
     public class StartClient {
@@ -8,7 +10,8 @@ namespace Symon.Client {
             Logger.Info("Starting Symon Client");
             Broadcast broadcast = new Broadcast();
             string ip = broadcast.Listen();
-            TcpStream stream = new TcpStream(PublicKeyReader.Read("key.cer"));
+            string certPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "key.cer";
+            TcpStream stream = new TcpStream(PublicKeyReader.Read(certPath));
             stream.Start(ip);
         }
     }
