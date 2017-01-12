@@ -34,13 +34,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_977A9D30D039E07E2BBEF8DB6DD225DE"
+        "OwnerKey" = "8:_3D33362BF45D4A44A8FF5B5176F5D7CE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3D33362BF45D4A44A8FF5B5176F5D7CE"
+        "OwnerKey" = "8:_977A9D30D039E07E2BBEF8DB6DD225DE"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -61,6 +61,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -77,6 +93,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.2"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -98,9 +130,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.2"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
+                "InstallUrl" = "8:go.microsoft.com/fwlink/?LinkId=397674"
                 }
             }
         }
@@ -212,9 +244,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:SymonClient"
+        "ProductName" = "8:Symon Client"
         "ProductCode" = "8:{9A655B13-7E9B-438E-BC4B-A0C19194C8A0}"
-        "PackageCode" = "8:{03996983-1D20-4981-85EF-79F65E648B32}"
+        "PackageCode" = "8:{9B1E3897-B39E-4D2C-8B57-35A25C5FDABA}"
         "UpgradeCode" = "8:{C586E2FD-B1C3-49D8-AD68-1EC1AADC5544}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -735,7 +767,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3D33362BF45D4A44A8FF5B5176F5D7CE"
             {
-            "SourcePath" = "8:..\\SymonClient\\obj\\x64\\Release\\SymonClient.exe"
+            "SourcePath" = "8:..\\SymonClient\\obj\\x64\\Debug\\SymonClient.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4F840B8F7B864C33B3020584474F02AC"
