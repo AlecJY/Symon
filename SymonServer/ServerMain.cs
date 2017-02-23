@@ -11,7 +11,7 @@ namespace Symon.Server {
             settings = new ConfigManager();
             settings.Load("settings.json");
             TcpStream tcpStream = StartTcpStream();
-            StartBroadcast("127.0.0.1");
+            StartBroadcast("10.0.255.255");
         }
 
         private static void Main(string[] args) {

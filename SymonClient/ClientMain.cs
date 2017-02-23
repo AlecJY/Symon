@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
+using System.Security.Principal;
 using log4net;
 using log4net.Config;
 
@@ -11,12 +14,27 @@ namespace Symon.Client {
             Logger.Info("Starting Symon Client");
             Broadcast broadcast = new Broadcast();
             string ip = broadcast.Listen();
-            TcpStream stream = new TcpStream(PublicKeyReader.Read("key.cer"));
+            TcpStream stream = new TcpStream(PublicKeyReader.Read(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "key.cer"));
             stream.Start(ip);
         }
 
         static void Main(string[] args) {
-            XmlConfigurator.Configure(new FileInfo("log.config"));
+            XmlConfigurator.Configure(new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "log.config"));
+            if (args.Length > 0) {
+                if (args.Length <= 2 && args[0].ToLower().Equals("/install")) {
+                    if (args.Length == 2) {
+                        Process.Start("cmd", "/c schtasks /Create /SC ONSTART /TN \"Symon Client\" /TR \"'" + Assembly.GetExecutingAssembly().Location + "'\" /RU " + "SYSTEM" + " /RL HIGHEST & pause");
+                    } else {
+                        Process.Start("cmd", "/c schtasks /Create /SC ONSTART /TN \"Symon Client\" /TR \"'" + Assembly.GetExecutingAssembly().Location + "'\" /RU " + WindowsIdentity.GetCurrent().Name + " /RL HIGHEST & pause");
+                    }
+                    
+                } else if (args.Length == 1 && args[0].ToLower().Equals("/uninstall")) {
+                    Process.Start("schtasks", "/Delete /F /TN \"Symon Client\"");
+                } else {
+                    Console.Error.WriteLine("Unknown arguments!");
+                }
+                return;
+            }
             while (true) {
                 new ClientMain(args);
             }
