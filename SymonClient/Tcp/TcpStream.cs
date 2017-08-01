@@ -35,6 +35,7 @@ namespace Symon.Client {
 
 
                 ConnectionManager = new ConnectionManager(server);
+                UWFManager manager = new UWFManager(ConnectionManager);
 
                 byte[] buffer = new byte[1024];
                 int recv;

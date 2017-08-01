@@ -39,10 +39,14 @@ namespace Symon.Server {
                     ClientInfo.Message msg = _msgs[0];
                     _msgs.RemoveAt(0);
                     if (!ConnectionList.ContainsKey(msg.Id)) {
-                        Console.WriteLine("Error: Unknown connection ID " + msg.Id);
+                        Console.Error.WriteLine("Error: Unknown connection ID " + msg.Id);
                     } else {
                         ConnectionInfo connectionInfo = ConnectionList[msg.Id];
-                        connectionInfo.Receive(msg.MsgBytes, msg.ClientId);
+                        try {
+                            connectionInfo.Receive(msg.MsgBytes, msg.ClientId);
+                        } catch (Exception e) {
+                            Console.Error.WriteLine(connectionInfo.PackageName + "." + connectionInfo.SubName + " receive data error:" + e);
+                        }
                     }
                 }
                 _receiving = false;
@@ -51,14 +55,14 @@ namespace Symon.Server {
 
         private class ConnectionInfo {
             private uint id;
-            private string packageName;
-            private string subName;
+            public string PackageName { get; }
+            public string SubName { get; }
             private Connection.Receive receive;
 
             public ConnectionInfo(uint id, string packageName, string subName, Connection.Receive receive) {
                 this.id = id;
-                this.packageName = packageName;
-                this.subName = subName;
+                this.PackageName = packageName;
+                this.SubName = subName;
                 this.receive = receive;
             }
 

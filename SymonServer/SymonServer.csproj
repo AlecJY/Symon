@@ -68,6 +68,7 @@
     <Compile Include="Tcp\PrivateKeyReader.cs" />
     <Compile Include="Tcp\TcpStream.cs" />
     <Compile Include="ServerMain.cs" />
+    <Compile Include="UWFManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

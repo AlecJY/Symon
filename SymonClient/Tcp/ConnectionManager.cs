@@ -7,6 +7,7 @@ using log4net.Repository.Hierarchy;
 
 namespace Symon.Client {
     public class ConnectionManager {
+        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
         private ServerInfo server;
         private uint lastID = 999;
         private Dictionary<uint, ConnectionInfo> ConnectionList = new Dictionary<uint, ConnectionInfo>();
@@ -46,10 +47,16 @@ namespace Symon.Client {
                     ServerInfo.Message msg = _msgs[0];
                     _msgs.RemoveAt(0);
                     if (!ConnectionList.ContainsKey(msg.Id)) {
-                        Console.WriteLine("Error: Unknown connection ID " + msg.Id);
+                        Console.Error.WriteLine("Error: Unknown connection ID " + msg.Id);
+                        Logger.Error("Error: Unknown connection ID " + msg.Id);
                     } else {
                         ConnectionInfo connectionInfo = ConnectionList[msg.Id];
-                        connectionInfo.Receive(msg.MsgBytes);
+                        try {
+                            connectionInfo.Receive(msg.MsgBytes);
+                        } catch (Exception e) {
+                            Console.Error.WriteLine(connectionInfo.PackageName + "." + connectionInfo.SubName + " receive data error:" + e);
+                            Logger.Error(connectionInfo.PackageName + "." + connectionInfo.SubName + " receive data error:" + e);
+                        }
                     }
                 }
                 _receiving = false;
@@ -58,14 +65,14 @@ namespace Symon.Client {
 
         private class ConnectionInfo {
             private uint id;
-            private string packageName;
-            private string subName;
+            public string PackageName { get; }
+            public string SubName { get; }
             private Connection.Receive receive;
 
             public ConnectionInfo(uint id, string packageName, string subName, Connection.Receive receive) {
                 this.id = id;
-                this.packageName = packageName;
-                this.subName = subName;
+                this.PackageName = packageName;
+                this.SubName = subName;
                 this.receive = receive;
             }
 

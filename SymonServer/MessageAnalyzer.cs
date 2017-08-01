@@ -12,7 +12,7 @@ namespace Symon.Server {
         public MessageAnalyzer(SuperviseConnection connection) {
             _connection = connection;
             Thread startUiThread = new Thread(StartUI);
-            startUiThread.Start();
+            // startUiThread.Start();
         }
 
         private void StartUI() {
