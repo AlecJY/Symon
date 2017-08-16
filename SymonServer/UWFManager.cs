@@ -23,8 +23,8 @@ namespace Symon {
 
         private void Receive(byte[] msg, uint id) {
             string msgStr = Encoding.UTF8.GetString(msg).ToLower();
-            if (msgStr.Equals("failed")) {
-                Console.WriteLine(_connection.GetClientInfos()[id].ClientId + " failed");
+            if (msgStr.Contains("failed")) {
+                Console.WriteLine(_connection.GetClientInfos()[id].ClientId + ": " + Encoding.UTF8.GetString(msg));
             }
         }
 

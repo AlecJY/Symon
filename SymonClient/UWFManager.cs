@@ -33,8 +33,16 @@ namespace Symon {
             string msgStr = Encoding.UTF8.GetString(msg).ToLower();
             if (msgStr.Equals("enable uwf")) {
                 UWFEnable();
+                if (!UWFNextEnabled()) {
+                    string failed = "Enable failed";
+                    _connection.Send(Encoding.UTF8.GetBytes(failed));
+                }
             } else if (msgStr.Equals("disable uwf")) {
                 UWFDisable();
+                if (UWFNextEnabled()) {
+                    string failed = "Disable failed";
+                    _connection.Send(Encoding.UTF8.GetBytes(failed));
+                }
             }
         }
 
