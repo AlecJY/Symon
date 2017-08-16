@@ -19,6 +19,7 @@ namespace Symon.Server {
         public TcpStream(X509Certificate2 cert) {
             this.cert = cert;
             ConnectionManager = new ConnectionManager(ClientList);
+            UWFManager manager = new UWFManager(ConnectionManager);
         }
 
         public Dictionary<uint, ClientInfo> GetClients() {
