@@ -35,6 +35,14 @@ namespace Symon.Client {
                         }
                     }
                 }
+                if (msg.StartsWith("32")) {
+                    PowerManagement powerManagement = new PowerManagement();
+                    if (msg.StartsWith("320")) {
+                        powerManagement.PowerOff();
+                    } else if (msg.StartsWith("321")) {
+                        powerManagement.Reboot();
+                    }
+                }
             }
             Running = false;
         }

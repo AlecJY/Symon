@@ -24,6 +24,10 @@ Sync Daemon Protocol version 0.1
 * 302 -- Arguments
 * 303 -- User
 * 304 -- Password
+
+#### Power Management
+* 320 -- Power Off
+* 321 -- Reboot
 	
 ## Client
 ### SslStream
