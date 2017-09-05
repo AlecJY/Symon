@@ -43,6 +43,8 @@ namespace Symon {
                     string failed = "Disable failed";
                     _connection.Send(Encoding.UTF8.GetBytes(failed));
                 }
+            } else if (msgStr.Equals("uwf restart")) {
+                UWFRestartSystem();
             }
         }
 
@@ -96,6 +98,15 @@ namespace Symon {
             if ((uint)result.ReturnValue.Value != 0)
             {
                 Logger.Error("Disable UWF Failed. Error code: " + result.ReturnValue.Value);
+            }
+        }
+
+        public void UWFRestartSystem() {
+            CimMethodParametersCollection parametersCollection = new CimMethodParametersCollection();
+            var result = _cimSession.InvokeMethod(_cimInstance, "RestartSystem", parametersCollection);
+            if ((uint)result.ReturnValue.Value != 0)
+            {
+                Logger.Error("Restart System Failed. Error code: " + result.ReturnValue.Value);
             }
         }
     }
