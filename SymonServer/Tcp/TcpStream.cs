@@ -36,23 +36,15 @@ namespace Symon.Server {
                 Console.Error.WriteLine(e);
                 Environment.Exit(-1);
             }
-            while (true) {
-                try {
-                    tcpClientConnected.Reset();
-                    listener.BeginAcceptTcpClient(AcceptCallback, listener);
-                    tcpClientConnected.WaitOne();
-                }
-                catch (Exception e) {
-                    Console.WriteLine(e);
-                }
-            }
+            listener.BeginAcceptTcpClient(AcceptCallback, listener);
         }
 
         private void AcceptCallback(IAsyncResult ar) {
             try {
+                tcpClientConnected.Set();
                 TcpListener listener = (TcpListener) ar.AsyncState;
                 TcpClient clientRequest = listener.EndAcceptTcpClient(ar);
-                tcpClientConnected.Set();
+                listener.BeginAcceptTcpClient(AcceptCallback, listener);
                 NetworkStream stream = clientRequest.GetStream();
                 SslStream sslStream = new SslStream(stream, false);
 
@@ -112,6 +104,7 @@ namespace Symon.Server {
                 }
                 Console.WriteLine("Client " + clientRequest.Client.RemoteEndPoint + " Disconnected.");
                 ClientList.Remove(client.ClientId);
+                Console.WriteLine("Connected Client: " + ClientList.Count);
             }
             catch (Exception e) {
                 Console.WriteLine(e);

@@ -11,7 +11,7 @@ namespace Symon.Server {
         private Socket server;
         private IPEndPoint remoteIP;
 
-        public Broadcast(string ip, int timeout = 20000) {
+        public Broadcast(string ip, int timeout = 1000) {
             this.ip = ip;
             this.timeout = timeout;
 

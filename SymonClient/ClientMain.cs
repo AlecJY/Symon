@@ -21,15 +21,10 @@ namespace Symon.Client {
         static void Main(string[] args) {
             XmlConfigurator.Configure(new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "log.config"));
             if (args.Length > 0) {
-                if (args.Length <= 2 && args[0].ToLower().Equals("/install")) {
-                    if (args.Length == 2) {
-                        Process.Start("cmd", "/c schtasks /Create /SC ONSTART /TN \"Symon Client\" /TR \"'" + Assembly.GetExecutingAssembly().Location + "'\" /RU " + "SYSTEM" + " /RL HIGHEST & pause");
-                    } else {
-                        Process.Start("cmd", "/c schtasks /Create /SC ONSTART /TN \"Symon Client\" /TR \"'" + Assembly.GetExecutingAssembly().Location + "'\" /RU " + WindowsIdentity.GetCurrent().Name + " /RL HIGHEST & pause");
-                    }
-                    
+                if (args.Length == 1 && args[0].ToLower().Equals("/install")) {
+                    Process.Start("cmd", "/c schtasks /Create /SC ONSTART /TN \"Symon Client\" /TR \"'" + Assembly.GetExecutingAssembly().Location + "'\" /RU " + "SYSTEM" + " /RL HIGHEST & pause");
                 } else if (args.Length == 1 && args[0].ToLower().Equals("/uninstall")) {
-                    Process.Start("schtasks", "/Delete /F /TN \"Symon Client\"");
+                    Process.Start("cmd", "/c schtasks /Delete /F /TN \"Symon Client\"");
                 } else {
                     Console.Error.WriteLine("Unknown arguments!");
                 }

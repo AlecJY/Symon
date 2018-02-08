@@ -12,11 +12,20 @@ namespace Symon.Server {
         public MessageAnalyzer(SuperviseConnection connection) {
             _connection = connection;
             Thread startUiThread = new Thread(StartUI);
-            // startUiThread.Start();
+            startUiThread.Start();
         }
 
         private void StartUI() {
-            while (true) {
+            Console.WriteLine("Press a key");
+            Console.ReadKey();
+            Dictionary<uint, bool> sendClient = new Dictionary<uint, bool>();
+            Dictionary<uint, Connection.SimpleClientInfo> clientInfos = _connection.GetClientInfos();
+            foreach (KeyValuePair<uint, Connection.SimpleClientInfo> keyValuePair in clientInfos) {
+                sendClient.Add(keyValuePair.Value.ClientId, true);
+            }
+            PowerManagement.Reboot(_connection.Send, sendClient);
+            Console.WriteLine("Send reboot");
+            /*while (true) {
                 string cmd = Console.ReadLine();
                 string arguments = Console.ReadLine();
                 Dictionary<uint, bool> sendClient = new Dictionary<uint, bool>();
@@ -26,7 +35,7 @@ namespace Symon.Server {
                 }
                 SystemCall systemCall = new SystemCall(_connection.Send);
                 systemCall.Send(cmd, arguments, sendClient);
-            }
+            }*/
         }
 
         private void Run() {
@@ -37,6 +46,7 @@ namespace Symon.Server {
                 if (msg.StartsWith("200")) {
                     ClientAuth clientAuth = new ClientAuth(_connection.getClient(id), _connection.Send);
                     clientAuth.GetAuth(msg);
+                    Console.WriteLine("Connected Client: " + _connection.GetClientInfos().Count);
                 }
             }
             Running = false;

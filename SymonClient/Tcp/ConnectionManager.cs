@@ -92,14 +92,16 @@ namespace Symon.Client {
             this.server = server;
         }
 
-        public void Send(byte[] msg) {
+        public bool Send(byte[] msg) {
             try {
                 server.SslStream.Write(BitConverter.GetBytes(msg.Length));
                 server.SslStream.Write(BitConverter.GetBytes(id));
                 server.SslStream.Write(msg);
+                return true;
             } catch (Exception e) {
                 Console.Error.WriteLine(e);
                 Logger.Error(e);
+                return false;
             }
         }
 

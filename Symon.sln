@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymonServer", "SymonServer\SymonServer.csproj", "{4E3A0397-F29C-456D-907D-C6F079445B97}"
 EndProject
@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SymonClientSetup", "SymonClientSetup\SymonClientSetup.vdproj", "{9C729709-8EA3-4F4F-90D4-61784B4E701A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UWFChecker", "UWFChecker\UWFChecker.csproj", "{3B828D16-070B-4561-A341-D8FA5A5DEEA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,8 +54,19 @@ Global
 		{9C729709-8EA3-4F4F-90D4-61784B4E701A}.Debug|x64.ActiveCfg = Debug
 		{9C729709-8EA3-4F4F-90D4-61784B4E701A}.Release|Any CPU.ActiveCfg = Release
 		{9C729709-8EA3-4F4F-90D4-61784B4E701A}.Release|x64.ActiveCfg = Release
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B828D16-070B-4561-A341-D8FA5A5DEEA0}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61A75A6B-9C8B-4F8E-88AE-E27AA358C2C0}
 	EndGlobalSection
 EndGlobal

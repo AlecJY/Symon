@@ -11,14 +11,14 @@ namespace Symon {
         public UWFManager(ConnectionManager connectionManager) {
             _connection = connectionManager.NewConnection("UWFManager", Receive);
             Thread startUiThread = new Thread(startUI);
-            startUiThread.Start();
+            //startUiThread.Start();
         }
 
         private void startUI() {
             Console.Write("Press any key...");
             Console.ReadKey();
-            DisableUWF();
-            Console.WriteLine("Send Disable");
+            EnableUWF();
+            Console.WriteLine("Send Enable");
         }
 
         private void Receive(byte[] msg, uint id) {

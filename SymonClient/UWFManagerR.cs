@@ -6,30 +6,14 @@ using Microsoft.Management.Infrastructure.Options;
 using Symon.Client;
 
 namespace Symon {
-    class UWFManager {
-        private static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
-        private Connection _connection;
-        private CimInstance _cimInstance;
-        private CimSession _cimSession;
+    class UWFManagerR: UWFManager {
+        protected Connection _connection;
 
-        public UWFManager(ConnectionManager connectionManager) {
+        public UWFManagerR(ConnectionManager connectionManager): base() {
             _connection = connectionManager.NewConnection("UWFManager", Receive);
-            try {
-                if (_cimSession != null) {
-                    _cimSession.Close();
-                }
-                var sessionOptions = new DComSessionOptions();
-                sessionOptions.Timeout = new TimeSpan(0, 2, 0);
-                _cimSession = CimSession.Create(@".", sessionOptions);
-            }
-            catch (CimException e) {
-                Console.WriteLine(e);
-                throw;
-            }
-            UpdateCimInstance();
         }
 
-        private void Receive(byte[] msg) {
+        protected void Receive(byte[] msg) {
             string msgStr = Encoding.UTF8.GetString(msg).ToLower();
             if (msgStr.Equals("enable uwf")) {
                 UWFEnable();
@@ -47,8 +31,35 @@ namespace Symon {
                 UWFRestartSystem();
             }
         }
+    }
 
-        private void UpdateCimInstance() {
+    public class UWFManager {
+        protected static readonly ILog Logger = LogManager.GetLogger(AppInfo.AppName);
+        protected CimInstance _cimInstance;
+        protected CimSession _cimSession;
+
+        public UWFManager()
+        {
+            try
+            {
+                if (_cimSession != null)
+                {
+                    _cimSession.Close();
+                }
+                var sessionOptions = new DComSessionOptions();
+                sessionOptions.Timeout = new TimeSpan(0, 2, 0);
+                _cimSession = CimSession.Create(@".", sessionOptions);
+            }
+            catch (CimException e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            UpdateCimInstance();
+        }
+
+        private void UpdateCimInstance()
+        {
             try
             {
                 var enumerateInstances = _cimSession.EnumerateInstances(@"root\standardcimv2\embedded", "UWF_Filter");
@@ -73,20 +84,24 @@ namespace Symon {
             }
         }
 
-        public bool UWFCurrentEnabled() {
+        public bool UWFCurrentEnabled()
+        {
             UpdateCimInstance();
             return (bool)_cimInstance.CimInstanceProperties["CurrentEnabled"].Value;
         }
 
-        public bool UWFNextEnabled() {
+        public bool UWFNextEnabled()
+        {
             UpdateCimInstance();
             return (bool)_cimInstance.CimInstanceProperties["NextEnabled"].Value;
         }
 
-        public void UWFEnable() {
+        public void UWFEnable()
+        {
             CimMethodParametersCollection parametersCollection = new CimMethodParametersCollection();
             var result = _cimSession.InvokeMethod(_cimInstance, "Enable", parametersCollection);
-            if ((uint)result.ReturnValue.Value != 0) {
+            if ((uint)result.ReturnValue.Value != 0)
+            {
                 Logger.Error("Enable UWF Failed. Error code: " + result.ReturnValue.Value);
             }
         }
@@ -101,7 +116,8 @@ namespace Symon {
             }
         }
 
-        public void UWFRestartSystem() {
+        public void UWFRestartSystem()
+        {
             CimMethodParametersCollection parametersCollection = new CimMethodParametersCollection();
             var result = _cimSession.InvokeMethod(_cimInstance, "RestartSystem", parametersCollection);
             if ((uint)result.ReturnValue.Value != 0)

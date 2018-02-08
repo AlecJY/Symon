@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9AA09A8C-7320-45E8-9321-AD006192775B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Symon.Client</RootNamespace>
     <AssemblyName>SymonClient</AssemblyName>
@@ -68,10 +68,11 @@
     <Compile Include="PowerManagement.cs" />
     <Compile Include="SystemCall.cs" />
     <Compile Include="Tcp\ConnectionManager.cs" />
+    <Compile Include="Tcp\KeepAlive.cs" />
     <Compile Include="Tcp\PublicKeyReader.cs" />
     <Compile Include="ServerAuth.cs" />
     <Compile Include="Tcp\TcpStream.cs" />
-    <Compile Include="UWFManager.cs" />
+    <Compile Include="UWFManagerR.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
